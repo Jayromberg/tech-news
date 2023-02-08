@@ -1,5 +1,6 @@
 import requests
 import time
+from parsel import Selector
 
 
 HEADER = {"user-agent": "Fake user-agent"}
@@ -20,7 +21,9 @@ def fetch(url):
 
 # Requisito 2
 def scrape_updates(html_content):
-    """Seu código deve vir aqui"""
+    sel = Selector(text=html_content)
+    links = sel.css("a.cs-overlay-link::attr(href)").getall()
+    return links
 
 
 # Requisito 3
