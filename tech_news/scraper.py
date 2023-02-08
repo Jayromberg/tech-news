@@ -35,7 +35,15 @@ def scrape_next_page_link(html_content):
 
 # Requisito 4
 def scrape_news(html_content):
-    """Seu código deve vir aqui"""
+    sel = Selector(text=html_content)
+    news_items = sel.css("header.entry-header")
+    for news_item in news_items:
+        # print(news_item.css("span.author > a::text").get())
+        url = news_item.css("a::attr(href)").get()
+        title = news_item.css("a::text").get()
+        timestamp = news_item.css("li.meta-date::text").get()
+        writer = news_item.css("span.author > a::text").get()
+        print(f"{url}\n{title}\n{timestamp}\n{writer}")
 
 
 # Requisito 5
