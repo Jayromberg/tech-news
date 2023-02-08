@@ -36,14 +36,25 @@ def scrape_next_page_link(html_content):
 # Requisito 4
 def scrape_news(html_content):
     sel = Selector(text=html_content)
-    news_items = sel.css("header.entry-header")
-    for news_item in news_items:
-        # print(news_item.css("span.author > a::text").get())
-        url = news_item.css("a::attr(href)").get()
-        title = news_item.css("a::text").get()
-        timestamp = news_item.css("li.meta-date::text").get()
-        writer = news_item.css("span.author > a::text").get()
-        print(f"{url}\n{title}\n{timestamp}\n{writer}")
+    news_item = sel.css("div.entry-header-inner")
+
+    url = sel.css("link[rel=canonical]::attr(href)").get()
+    title = news_item.css("h1::text").get().strip()
+    timestamp = news_item.css("li.meta-date::text").get()
+    writer = news_item.css("span.author > a::text").get()
+    reading_time = int(news_item.css(
+                "li.meta-reading-time::text"
+            ).get().split()[0])
+    summary = ''.join(
+            sel.css("div.entry-content > p:nth-of-type(1) ::text").getall()
+        ).strip()
+    category = news_item.css("span.label::text").get()
+
+    return {
+        "url": url, "title": title, "timestamp": timestamp,
+        "writer": writer, "reading_time": reading_time,
+        "summary": summary, "category": category,
+    }
 
 
 # Requisito 5
