@@ -1,9 +1,11 @@
 import requests
 import time
 from parsel import Selector
+from tech_news.database import create_news
 
 
-HEADER = {"user-agent": "Fake user-agent"}
+HEADER = {'User-agent': 'Fake user-agent'}
+URL = "https://blog.betrybe.com"
 
 
 # Requisito 1
@@ -36,19 +38,19 @@ def scrape_next_page_link(html_content):
 # Requisito 4
 def scrape_news(html_content):
     sel = Selector(text=html_content)
-    news_item = sel.css("div.entry-header-inner")
+    div_header = sel.css("div.entry-header-inner")
 
     url = sel.css("link[rel=canonical]::attr(href)").get()
-    title = news_item.css("h1::text").get().strip()
-    timestamp = news_item.css("li.meta-date::text").get()
-    writer = news_item.css("span.author > a::text").get()
-    reading_time = int(news_item.css(
+    title = div_header.css("h1::text").get().strip()
+    timestamp = div_header.css("li.meta-date::text").get()
+    writer = div_header.css("span.author > a::text").get()
+    reading_time = int(div_header.css(
                 "li.meta-reading-time::text"
             ).get().split()[0])
     summary = ''.join(
             sel.css("div.entry-content > p:nth-of-type(1) ::text").getall()
         ).strip()
-    category = news_item.css("span.label::text").get()
+    category = div_header.css("span.label::text").get()
 
     return {
         "url": url, "title": title, "timestamp": timestamp,
@@ -59,4 +61,25 @@ def scrape_news(html_content):
 
 # Requisito 5
 def get_tech_news(amount):
-    """Seu código deve vir aqui"""
+    html_content = fetch(URL)
+    updates = scrape_updates(html_content)
+    next_page_link = scrape_next_page_link(html_content)
+
+    news = []
+
+    while next_page_link:
+        for update in updates:
+            if len(news) >= amount:
+                break
+            news_content = fetch(update)
+            news.append(scrape_news(news_content))
+
+        if len(news) < amount:
+            html_content = fetch(next_page_link)
+            updates = scrape_updates(html_content)
+            next_page_link = scrape_next_page_link(html_content)
+        else:
+            break
+
+    create_news(news)
+    return news
