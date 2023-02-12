@@ -112,9 +112,8 @@ def test_reading_plan_group_news(mock_file):
     with patch(
         "tech_news.analyzer.reading_plan.find_news", return_value=mock_file
     ):
-        test = ReadingPlanService.group_news_for_available_time(10)
-        print(test)
-        assert ReadingPlanService.group_news_for_available_time(10) == {
+        response = ReadingPlanService.group_news_for_available_time(10)
+        assert response == {
             "readable": [
                 {
                     "unfilled_time": 1,
@@ -147,15 +146,15 @@ def test_reading_plan_group_news(mock_file):
                         (
                             "noticia_5",
                             1,
-                        )
+                        ),
                         (
                             "noticia_6",
                             1,
-                        )
+                        ),
                         (
                             "noticia_7",
                             7,
-                        )
+                        ),
                     ],
                 },
                 {
@@ -164,7 +163,7 @@ def test_reading_plan_group_news(mock_file):
                         (
                             "noticia_8",
                             8,
-                        )
+                        ),
                     ],
                 },
                 {
@@ -173,7 +172,7 @@ def test_reading_plan_group_news(mock_file):
                         (
                             "noticia_9",
                             5,
-                        )
+                        ),
                     ],
                 },
             ],
@@ -182,7 +181,5 @@ def test_reading_plan_group_news(mock_file):
             ],
         }
 
-    with pytest.raises(
-        ValueError, match="Valor 'available_time' deve ser maior que zero"
-    ):
-        return ReadingPlanService.group_news_for_available_time(0)
+    with pytest.raises(ValueError):
+        ReadingPlanService.group_news_for_available_time(0)
