@@ -14,13 +14,16 @@ def search_by_date(date):
     try:
         ISO_date = datetime.strptime(date, "%Y-%m-%d")
         date_str = ISO_date.strftime("%d-%m-%Y")
-        query = {"timestamp": {"$eq": date_str}}
-        response = search_news(query)
-        return [(new["title"], new["url"]) for new in response]
-    except ValueError:
+    except Exception:
         raise ValueError('Data inválida')
+
+    query = {"timestamp": {"$eq": date_str}}
+    response = search_news(query)
+    return [(new["title"], new["url"]) for new in response]
 
 
 # Requisito 9
 def search_by_category(category):
-    """Seu código deve vir aqui"""
+    query = {"category": {"$regex": category, "$options": "i"}}
+    response = search_news(query)
+    return [(new["title"], new["url"]) for new in response]
