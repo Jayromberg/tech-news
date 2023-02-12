@@ -13,7 +13,7 @@ def search_by_title(title):
 def search_by_date(date):
     try:
         ISO_date = datetime.strptime(date, "%Y-%m-%d")
-        date_str = ISO_date.strftime("%d-%m-%Y")
+        date_str = ISO_date.strftime("%d/%m/%Y")
     except Exception:
         raise ValueError('Data inválida')
 
