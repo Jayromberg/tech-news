@@ -25,30 +25,24 @@ def analyzer_menu():
     menu()
     option = input()
 
-    if option == "0":
-        print("Digite quantas notícias serão buscadas:")
-        quantity = input()
-        a = get_tech_news(int(quantity))
-        print(a)
-    elif option == "1":
-        print("Digite o título:")
-        title = input()
-        b = search_by_title(title)
-        print(b)
-    elif option == "2":
-        print("Digite a data no formato aaaa-mm-dd:")
-        date = input()
-        c = search_by_date(date)
-        print(c)
-    elif option == "3":
-        print("Digite a categoria:")
-        category = input()
-        d = search_by_category(category)
-        print(d)
-    elif option == "4":
-        e = top_5_categories()
-        print(e)
-    elif option == "5":
-        print("Encerrando script\n")
-    else:
+    options = {
+        "0": (get_tech_news, int, "Digite quantas notícias serão buscadas:"),
+        "1": (search_by_title, str, "Digite o título:"),
+        "2": (search_by_date, str, "Digite a data no formato aaaa-mm-dd:"),
+        "3": (search_by_category, str, "Digite a categoria:"),
+        "4": (top_5_categories, None, None),
+        "5": (None, None, "Encerrando script\n"),
+    }
+
+    func, arg_type, input_prompt = options.get(option, (None, None, None))
+
+    if func is None and input_prompt is not None:
+        print(input_prompt)
+    elif func is None:
         print("Opção inválida", file=sys.stderr)
+    elif arg_type:
+        print(input_prompt)
+        arg = arg_type(input())
+        print(func(arg))
+    else:
+        print(func())
